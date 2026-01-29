@@ -7,12 +7,13 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 from core.exceptions import NotFoundError
-from core.security import decode_token
+from core.security import SymmetricJWT
 from dependencies.database import get_db
 from models.user import User
 from services.user_service import UserService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+_jwt = SymmetricJWT()
 
 
 async def get_current_user(
@@ -20,7 +21,7 @@ async def get_current_user(
     db: Annotated[AsyncConnection, Depends(get_db)],
 ) -> User:
     """Get current authenticated user from JWT token."""
-    payload = decode_token(token)
+    payload = _jwt.decode(token)
     if not payload or payload.get("type") != "access":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
