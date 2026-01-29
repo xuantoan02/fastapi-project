@@ -85,6 +85,6 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
-.github/
+.github/workflows/
 # Project specific
 .claude/
